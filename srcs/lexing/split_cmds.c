@@ -10,6 +10,7 @@ t_command *new_command(void)
     cmd->outfile = NULL;
     cmd->append = 0;
     cmd->next = NULL;
+    cmd->heredoc = 0;
     return cmd;
 }
 
@@ -74,6 +75,27 @@ void split_cmds(t_all *as, t_token *token, t_command **cmd_list)
                 {
                         current_cmd->args = add_arg(current_cmd->args, token->value);
                 }
+                else if (token->type == HEREDOC)
+                {
+                        if (!token->next || token->next->type != WORD) //what to add
+                        {
+                                printf("Syntax error: expected filename after redirection\n");
+                                return ; //free first
+
+                        }
+                        // current_cmd->args = add_arg(current_cmd->args, token->value);
+                        current_cmd->heredoc = 1;
+                        int n = ft_strlen(token->next->value);
+                        current_cmd->infile  = heredoc_cmd(as, token->next->value, n);
+                        token = token->next; //skip del
+                        // append_command(cmd_list, current_cmd);
+                        //check
+                        // current_cmd = new_command(); 
+                      
+                        
+                        
+
+                }
                 else if (token->type == REDIR)
                 //then next token should be a filename
                 {
@@ -88,6 +110,8 @@ void split_cmds(t_all *as, t_token *token, t_command **cmd_list)
                         {
                                 if (ft_strncmp(token->value, ">>", 2) == 0)
                                         current_cmd->append = 1;
+                                // TODO: not make free for prev outfile
+                                // and not check permission for prev files 
                                 current_cmd->outfile = ft_strdup(token->next->value);
                         }
                         else if (ft_strncmp(token->value, "<", 1) == 0)

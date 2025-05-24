@@ -23,6 +23,8 @@ int expand_var(t_all *as, t_token *token , t_envp *cp_envp)
 
     while (token)
     {
+        if(token->prev && token->prev->type == HEREDOC)
+            return 0;
         if (token->type == WORD)
         {
             int i = 0;

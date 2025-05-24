@@ -147,7 +147,7 @@ int is_valid_unset_key(char *key);
 void remove_env_var(t_envp *env, const char *key);
 int execute_unset(char **args, t_envp *env);
 char *cur_dir(t_all *as);
-void heredoc_cmd(t_all *as, char *del , int n);
+char *heredoc_cmd(t_all *as, char *del , int n);
 void	execute_commands(t_all *as, t_command *cmd_list, t_envp *env);
 
 #endif

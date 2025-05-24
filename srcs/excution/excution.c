@@ -18,7 +18,20 @@ int prepare_pipe_and_fork(int fd[2], int has_next)
 
 void redirect_io(t_command *cmd, int prev_fd, int fd[2])
 {
-    if (cmd->infile)
+       if (cmd->heredoc)
+    {
+         int fd_heredoc = open("tmp.txt", O_RDONLY);
+         if (fd_heredoc == -1)
+         {
+             perror("open infile");
+            // as->exit_status = 1;
+            exit(EXIT_FAILURE);
+        }
+        dup2(fd_heredoc, STDIN_FILENO);
+        close(fd_heredoc);
+        unlink("tmp.txt");
+    }
+    else if (cmd->infile)
     {
         int fd_in = open(cmd->infile, O_RDONLY);
         if (fd_in == -1)
@@ -66,11 +79,14 @@ void child_process_logic(t_command *cmd, t_envp *env, int prev_fd, int fd[2])
         execute_built_ins(cmd, env);
         exit(0);
     }
+ 
+
     else
     {
         char *path = cmd->args[0][0] == '/' ? cmd->args[0] : find_path(env, cmd->args[0]);
         if (!path)
         {
+            // TODO: is forbidden use write in stderr
             fprintf(stderr, "%s: command not found\n", cmd->args[0]);
             exit(127);
         }
@@ -93,6 +109,36 @@ void parent_process_cleanup(t_command *cmd, int *prev_fd, int fd[2])
         *prev_fd = -1;
 }
 
+
+char *heredoc_cmd(t_all *as, char *del , int n)
+{
+        int fd = open("tmp.txt", O_RDWR | O_CREAT | O_TRUNC, 0644);//open a file
+        if (fd == -1)
+        {
+                perror("open infile");
+                as->exit_status = 1;
+                exit(as->exit_status);//check this 1
+        }
+        while(1)
+        {
+                char *line = readline("> ");
+                if(!line)
+                        break ;
+                 int len = ft_strlen(line);
+                if(len == n && (ft_strncmp(line, del, n )== 0))     
+                {
+                        free(line);
+                        break;
+                }
+                write(fd, line, len);
+                write(fd,"\n",1);
+                free(line);
+        }        
+        close(fd);
+            return ft_strdup("tmp.txt"); 
+        
+
+}
 void execute_commands(t_all *as, t_command *cmd_list, t_envp *env)
 {
     int fd[2];
@@ -113,6 +159,7 @@ void execute_commands(t_all *as, t_command *cmd_list, t_envp *env)
         {
             execute_built_ins(cmd_list, env);
         }
+         
         else
         {
             pid = prepare_pipe_and_fork(fd, cmd_list->next != NULL);
@@ -141,7 +188,7 @@ void execute_commands(t_all *as, t_command *cmd_list, t_envp *env)
         cmd_list = cmd_list->next;
     }
 
-    for (int i = 0; i < num_forked_children; i++)
+    for (int i = 0; i < num_forked_children; i++) //change to while
         waitpid(child_pids[i], &status, 0);
 
     free(child_pids);

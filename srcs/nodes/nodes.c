@@ -21,6 +21,7 @@ int	add_node(t_token **token, char *input)
 	node = malloc(sizeof(t_token)); // free 
 	if (!node)
 		return -1; //what shall it return
+	node->prev = NULL;
 	node->value = ft_strdup(input);  //free
 	if (!node->value)
 		return -1;

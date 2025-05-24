@@ -60,7 +60,7 @@ char *find_path(t_envp *cp_envp, char *cmd) {
        	fullpath = get_full_path(start, cmd);
         if (fullpath) 
         {
-            printf("%s\n", fullpath);
+            // printf("%s\n", fullpath);
             return fullpath;
         } //delete it before submit
         free(fullpath);
