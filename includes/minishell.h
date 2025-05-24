@@ -126,14 +126,28 @@ void restore_signals(void);
 char **add_arg(char **args, char *value);
 
 void split_cmds(t_all *as, t_token *token, t_command **cmd_list);
-void execute_commands(t_all *as,t_command *cmd_list, t_envp *env);
+// void execute_commands(t_all *as,t_command *cmd_list, t_envp *env);
 t_command *new_command(void);
 void print_commands(t_command *cmd_list);
 
-//exit
+//built_ins
 void exit_program(t_all *as, int n);
-
+int    execute_echo(char **args);
+int     if_nflag(char *str);
+int     built_in(t_command *cmd_list);
+void   execute_built_ins(t_command *cmd_list, t_envp *env);
+void update_env_var(t_envp *env, const char *key, const char *value);
+int    execute_cd(char **args, t_envp *env);
+int execute_env(char **args, t_envp *env);
+int execute_export(char **args, t_envp *env);
+void add_or_update_env(t_envp *env, char *key, char *value);
+int is_valid_key(char *key);
+int execute_pwd(char **args);
+int is_valid_unset_key(char *key);
+void remove_env_var(t_envp *env, const char *key);
+int execute_unset(char **args, t_envp *env);
 char *cur_dir(t_all *as);
 void heredoc_cmd(t_all *as, char *del , int n);
+void	execute_commands(t_all *as, t_command *cmd_list, t_envp *env);
 
 #endif
