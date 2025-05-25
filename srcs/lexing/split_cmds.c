@@ -11,6 +11,7 @@ t_command *new_command(void)
     cmd->append = 0;
     cmd->next = NULL;
     cmd->heredoc = 0;
+    cmd->executable = 1;
     return cmd;
 }
 
@@ -113,10 +114,33 @@ void split_cmds(t_all *as, t_token *token, t_command **cmd_list)
                                 // TODO: not make free for prev outfile
                                 // and not check permission for prev files 
                                 current_cmd->outfile = ft_strdup(token->next->value);
+                        int fd_out = open(current_cmd->outfile, current_cmd->append ? O_WRONLY | O_CREAT | O_APPEND : O_WRONLY | O_CREAT | O_TRUNC, 0644);
+                                if (fd_out == -1)
+                                {
+                                        perror("outfile");
+                                        current_cmd->executable = 0;
+                                        
+                                       
+                                }
+                                else
+                                        close(fd_out);
+                                
                         }
                         else if (ft_strncmp(token->value, "<", 1) == 0)
                         {
                                 current_cmd->infile = ft_strdup(token->next->value);
+                          
+                                 int fd_in = open(current_cmd->infile, O_RDONLY);
+                                if (fd_in == -1)
+                                {
+                                        perror("infile");
+                                         current_cmd->executable = 0;
+                                         
+                                        
+                                }
+                                else
+                                        close(fd_in);
+                              
                         }
 
                         token = token->next; // skip filename

@@ -75,7 +75,7 @@ int main(int argv, char** argc, char** envp)
 			write(1, "exit\n", 5);
 			break;
 		}
-        restore_signals();
+        ignore_signals();
         
         add_history(input);
         // char *x= expand_variables(input,as);//move to before execve

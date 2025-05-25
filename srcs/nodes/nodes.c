@@ -1,3 +1,14 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   nodes.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: kabu-zee <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/07 12:48:59 by kabu-zee          #+#    #+#             */
+/*   Updated: 2025/05/07 12:49:07 by kabu-zee         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 #include "../includes/minishell.h"
 
 t_token	*find_last_node(t_token *token)
@@ -13,18 +24,18 @@ t_token	*find_last_node(t_token *token)
 
 int	add_node(t_token **token, char *input)
 {
-	t_token	*node;
-	t_token	*last_node;
+	t_token		*node;
+	t_token		*last_node;
 
 	if (!input)
-		return -1;
-	node = malloc(sizeof(t_token)); // free 
+		return (-1);
+	node = malloc(sizeof(t_token));
 	if (!node)
-		return -1; //what shall it return
+		return (-1);
 	node->prev = NULL;
-	node->value = ft_strdup(input);  //free
+	node->value = ft_strdup(input);
 	if (!node->value)
-		return -1;
+		return (-1);
 	node->next = NULL;
 	if (*token == NULL)
 		*token = node;
@@ -34,5 +45,5 @@ int	add_node(t_token **token, char *input)
 		last_node->next = node;
 		node->prev = last_node;
 	}
-	return 0;
+	return (0);
 }

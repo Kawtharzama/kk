@@ -1,8 +1,20 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   exit.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: kabu-zee <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/05/07 12:48:59 by kabu-zee          #+#    #+#             */
+/*   Updated: 2025/05/07 12:49:07 by kabu-zee         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../includes/minishell.h"
 
-void exit_program(t_all *as, int n)
+void	exit_program(t_all *as, int n)
 {
-    clean(as);
-    as->exit_status = n ;
-    exit(n);
+	clean(as);
+	as->exit_status = n;
+	exit(n);
 }

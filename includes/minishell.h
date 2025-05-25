@@ -49,6 +49,7 @@ typedef struct s_command
     char *outfile; // file to write to
     int append;    // 0 for >, 1 for >>
     int heredoc; 
+    int executable;
     struct s_command *next;
 } t_command;
 
@@ -124,6 +125,7 @@ void sig_handler_prompt (int signum);
 void setup_signals(void);
 void restore_signals(void);
 char **add_arg(char **args, char *value);
+void	ignore_signals(void);
 
 void split_cmds(t_all *as, t_token *token, t_command **cmd_list);
 // void execute_commands(t_all *as,t_command *cmd_list, t_envp *env);

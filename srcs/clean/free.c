@@ -15,6 +15,7 @@ void free_args(char **args)
     free(args);
     args = NULL;
 }
+
 int free_envp(t_envp *cp_envp)
 {
     int i;
@@ -78,6 +79,21 @@ void free_tokens(t_token *token)
     }
 }
 
+void	free_files(t_command *cmd)
+{
+	if (cmd->infile)
+	{
+		free(cmd->infile);
+		cmd->infile = NULL;
+	}
+	if (cmd->outfile)
+	{
+		free(cmd->outfile);
+		cmd->outfile = NULL;
+	}
+}
+
+
 void free_cmd(t_command *cmd)
 {
     t_command *tmp;
@@ -99,17 +115,8 @@ void free_cmd(t_command *cmd)
             cmd->args = NULL;
         }
 
-        if (cmd->infile)
-        {
-            free(cmd->infile);
-            cmd->infile = NULL;
-        }
+       		free_files(cmd);
 
-        if (cmd->outfile)
-        {
-            free(cmd->outfile);
-            cmd->outfile = NULL;
-        }
 
         free(cmd);
         cmd = tmp;

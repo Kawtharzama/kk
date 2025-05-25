@@ -29,7 +29,7 @@ int toknize(char* input, t_all *as) //change to void
 		as->exit_status = 0;
 	remove_quotes(as->token);
 	split_cmds(as, as->token, &as->cmd);
-	print_commands(as->cmd); //remove   
+	// print_commands(as->cmd); //remove   
 	execute_commands(as, as->cmd, as->cp_envp);
     return 0; //exit
 }
@@ -41,7 +41,8 @@ void token_types(t_token *token)
 		if (ft_strncmp(token->value, "<<",2) == 0) {
             token->type = HEREDOC;
         }
-		else if  (ft_strncmp(token->value, ">>", 2) == 0 ||(ft_strncmp(token->value, ">",1) == 0) || (ft_strncmp(token->value, "<", 1) == 0) ) {
+		else if  (
+			(token->value, ">>", 2) == 0 ||(ft_strncmp(token->value, ">",1) == 0) || (ft_strncmp(token->value, "<", 1) == 0) ) {
             token->type = REDIR;
 	        }
 

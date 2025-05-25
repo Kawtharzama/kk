@@ -16,20 +16,20 @@ int prepare_pipe_and_fork(int fd[2], int has_next)
     return pid;
 }
 
-void redirect_io(t_command *cmd, int prev_fd, int fd[2])
+void redirect_io(t_command *cmd, int prev_fd, int fd[2]) //return int
 {
-       if (cmd->heredoc) //merge
+    if (cmd->heredoc) //merge
     {
-         int fd_heredoc = open("tmp.txt", O_RDONLY);
+         int fd_heredoc = open("/tmp/minishell_heredoc_tmp.txt", O_RDONLY);
          if (fd_heredoc == -1)
          {
-             perror("open infile");
+             perror("open heredoc2");
             // as->exit_status = 1;
             exit(EXIT_FAILURE);
         }
         dup2(fd_heredoc, STDIN_FILENO);
         close(fd_heredoc);
-        unlink("tmp.txt");
+        // unlink("/tmp/minishell_heredoc_tmp.txt"); // TODO: remove in perent
     }
     else if (cmd->infile)
     {
@@ -62,6 +62,37 @@ void redirect_io(t_command *cmd, int prev_fd, int fd[2])
         dup2(fd[1], STDOUT_FILENO);
 }
 
+
+char *heredoc_cmd(t_all *as, char *del , int n) //merge
+{
+        int fd = open("/tmp/minishell_heredoc_tmp.txt", O_RDWR | O_CREAT | O_TRUNC, 0644);//open a file
+        if (fd == -1)
+        {
+                perror("open heredoc");
+                as->exit_status = 1;
+                exit(as->exit_status);//check this 1
+        }
+        while(1)
+        {
+
+                char *line = readline("> ");
+                if(!line)
+                        break ;
+                 int len = ft_strlen(line);
+                if(len == n && (ft_strncmp(line, del, n )== 0))     
+                {
+                        free(line);
+                        break;
+                }
+                write(fd, line, len);
+                write(fd,"\n",1);
+                free(line);
+        }        
+        close(fd);
+            return ft_strdup("/tmp/minishell_heredoc_tmp.txt"); 
+        
+
+}
 void child_process_logic(t_command *cmd, t_envp *env, int prev_fd, int fd[2])
 {
     redirect_io(cmd, prev_fd, fd);
@@ -79,18 +110,16 @@ void child_process_logic(t_command *cmd, t_envp *env, int prev_fd, int fd[2])
         execute_built_ins(cmd, env);
         exit(0);
     }
- 
-
     else
     {
         char *path = cmd->args[0][0] == '/' ? cmd->args[0] : find_path(env, cmd->args[0]);
         if (!path)
         {
-            // TODO: is forbidden use write in stderr
             fprintf(stderr, "%s: command not found\n", cmd->args[0]);
             exit(127);
         }
-        execv(path, cmd->args);
+        restore_signals();
+        execve(path, cmd->args, env->tmp_envp);
         perror("execv");
         exit(EXIT_FAILURE);
     }
@@ -109,36 +138,6 @@ void parent_process_cleanup(t_command *cmd, int *prev_fd, int fd[2])
         *prev_fd = -1;
 }
 
-
-char *heredoc_cmd(t_all *as, char *del , int n) //merge
-{
-        int fd = open("tmp.txt", O_RDWR | O_CREAT | O_TRUNC, 0644);//open a file
-        if (fd == -1)
-        {
-                perror("open infile");
-                as->exit_status = 1;
-                exit(as->exit_status);//check this 1
-        }
-        while(1)
-        {
-                char *line = readline("> ");
-                if(!line)
-                        break ;
-                 int len = ft_strlen(line);
-                if(len == n && (ft_strncmp(line, del, n )== 0))     
-                {
-                        free(line);
-                        break;
-                }
-                write(fd, line, len);
-                write(fd,"\n",1);
-                free(line);
-        }        
-        close(fd);
-            return ft_strdup("tmp.txt"); 
-        
-
-}
 void execute_commands(t_all *as, t_command *cmd_list, t_envp *env)
 {
     int fd[2];
@@ -152,53 +151,72 @@ void execute_commands(t_all *as, t_command *cmd_list, t_envp *env)
     int max_children_capacity = 8;
 
     (void)as;
-
+    t_command *count_list;
+    count_list = cmd_list;
+    int c =0;
+    while (count_list)
+    {
+        count_list = count_list -> next;
+        c++;
+    }
+     
     while (cmd_list)
     {
-        if (built_in(cmd_list) && cmd_list->next == NULL && cmd_list->infile == NULL && cmd_list->outfile == NULL && prev_fd == -1)
+          //TODO if it is 1 cmd excute here , multiole in child
+        if(cmd_list->executable == 1)
         {
-            //  restore_signals(); //merge
-            execute_built_ins(cmd_list, env);
-        }
-         
-        else
-        {
-            pid = prepare_pipe_and_fork(fd, cmd_list->next != NULL);
-            if (pid == 0)
-                child_process_logic(cmd_list, env, prev_fd, fd);
+            if (built_in(cmd_list) && c == 1) //add the
+            {
+                execute_built_ins(cmd_list, env);
+            }
             else
             {
-                // Store PID
-                if (num_forked_children == max_children_capacity)
+                pid = prepare_pipe_and_fork(fd, cmd_list->next != NULL);
+                if (pid == 0)
+                    child_process_logic(cmd_list, env, prev_fd, fd);
+                else
                 {
-                    max_children_capacity *= 2;
-                    pid_t *temp_pids = realloc(child_pids, max_children_capacity * sizeof(pid_t));
-                    if (!temp_pids)
+                    // Store PID
+                    if (num_forked_children == max_children_capacity)
                     {
-                        perror("realloc");
-                        free(child_pids);
-                        exit(EXIT_FAILURE);
+                        max_children_capacity *= 2;
+                        pid_t *temp_pids = realloc(child_pids, max_children_capacity * sizeof(pid_t));
+                        if (!temp_pids)
+                        {
+                            perror("realloc");
+                            free(child_pids);
+                            exit(EXIT_FAILURE);
+                        }
+                        child_pids = temp_pids;
                     }
-                    child_pids = temp_pids;
+                    child_pids[num_forked_children++] = pid;
+
+                    parent_process_cleanup(cmd_list, &prev_fd, fd);
                 }
-                child_pids[num_forked_children++] = pid;
-
-                parent_process_cleanup(cmd_list, &prev_fd, fd);
             }
+           
         }
-        cmd_list = cmd_list->next;
+         cmd_list = cmd_list->next;
     }
-
-    for (int i = 0; i < num_forked_children; i++) //merge change to while
-        waitpid(child_pids[i], &status, 0); //merge
-        /*if(WIFEXITED(status))
+    int i =0;
+    while(i< num_forked_children)
+    {
+        waitpid(child_pids[i], &status, 0);
+        if(waitpid(-1, &status, 0) == (child_pids[num_forked_children - 1 ]))
         {
+            if(WIFEXITED(status))
+             {
                 as->exit_status = WEXITSTATUS(status);
-        }
-        else if (WIFSIGNALED(status)) {
+             }
+            else if (WIFSIGNALED(status)) {
                 as->exit_status = 128 + WTERMSIG(status);  
-            }*/
-
+         }
+    }
+        i++;
+    }
+    // for (int i = 0; i < num_forked_children; i++)
+    //     waitpid(child_pids[i], &status, 0);
+     
 
     free(child_pids);
 }
