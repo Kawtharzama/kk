@@ -149,5 +149,6 @@ int execute_unset(char **args, t_envp *env);
 char *cur_dir(t_all *as);
 char *heredoc_cmd(t_all *as, char *del , int n);
 void	execute_commands(t_all *as, t_command *cmd_list, t_envp *env);
+int expand_var(t_all *as, t_token *token, t_envp *cp_envp);
 
 #endif

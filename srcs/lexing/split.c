@@ -40,7 +40,7 @@ int split_input(char* input,t_token **token, t_tmptoken *tmp)
  			{
    				 
 				printf("Syntax_error\n");
-				return -1;
+					return -1;
 			} //exit function (clear then exit)
  	i++;
  	}

@@ -18,7 +18,7 @@ int prepare_pipe_and_fork(int fd[2], int has_next)
 
 void redirect_io(t_command *cmd, int prev_fd, int fd[2])
 {
-       if (cmd->heredoc)
+       if (cmd->heredoc) //merge
     {
          int fd_heredoc = open("tmp.txt", O_RDONLY);
          if (fd_heredoc == -1)
@@ -110,7 +110,7 @@ void parent_process_cleanup(t_command *cmd, int *prev_fd, int fd[2])
 }
 
 
-char *heredoc_cmd(t_all *as, char *del , int n)
+char *heredoc_cmd(t_all *as, char *del , int n) //merge
 {
         int fd = open("tmp.txt", O_RDWR | O_CREAT | O_TRUNC, 0644);//open a file
         if (fd == -1)
@@ -157,6 +157,7 @@ void execute_commands(t_all *as, t_command *cmd_list, t_envp *env)
     {
         if (built_in(cmd_list) && cmd_list->next == NULL && cmd_list->infile == NULL && cmd_list->outfile == NULL && prev_fd == -1)
         {
+            //  restore_signals(); //merge
             execute_built_ins(cmd_list, env);
         }
          
@@ -188,8 +189,16 @@ void execute_commands(t_all *as, t_command *cmd_list, t_envp *env)
         cmd_list = cmd_list->next;
     }
 
-    for (int i = 0; i < num_forked_children; i++) //change to while
-        waitpid(child_pids[i], &status, 0);
+    for (int i = 0; i < num_forked_children; i++) //merge change to while
+        waitpid(child_pids[i], &status, 0); //merge
+        /*if(WIFEXITED(status))
+        {
+                as->exit_status = WEXITSTATUS(status);
+        }
+        else if (WIFSIGNALED(status)) {
+                as->exit_status = 128 + WTERMSIG(status);  
+            }*/
+
 
     free(child_pids);
 }

@@ -1,26 +1,36 @@
 #include "../includes/minishell.h"
+void free_exit_status(t_all *as)
+{
+	
+		free_token_cmd(as);
+		as->exit_status = 1;
+	
+}
 
 int toknize(char* input, t_all *as) //change to void
 {
-    int i = 0;
+    int i;
+	
 	i = split_input(input, &as->token, as->tmp);
 	if(i == -1)
 	{
-		free_token_cmd(as);
-		as->exit_status = 1; //add int exiyt to be 1;
-		return 1;//void
+		as->exit_status = 1;
+		return(free_token_cmd(as),1);
 	}
-	expand_var(as, as->token, as->cp_envp);
+	else
+		as->exit_status = 0;
+	i = expand_var(as, as->token, as->cp_envp);
+	if(i < 0)
+	{
+		as->exit_status = 1; //add int exiyt to be 1;
+		return(free_token_cmd(as),1);
+	}
+	else
+		as->exit_status = 0;
 	remove_quotes(as->token);
-	
 	split_cmds(as, as->token, &as->cmd);
-	print_commands(as->cmd); //remove
-        
+	print_commands(as->cmd); //remove   
 	execute_commands(as, as->cmd, as->cp_envp);
-
-
-
-	
     return 0; //exit
 }
 
