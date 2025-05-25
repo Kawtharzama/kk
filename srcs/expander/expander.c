@@ -39,7 +39,7 @@ static int toggle_double_quote(int ch, int in_double)
 
 static int handle_exit_status(t_all *as, t_token *token)
 {
-    printf("%d", as->exit_status);
+    // printf("%d", as->exit_status);
     free(token->value);
     token->value = ft_itoa(as->exit_status);
     if (!token->value)

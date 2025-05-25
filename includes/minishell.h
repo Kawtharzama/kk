@@ -127,7 +127,7 @@ void restore_signals(void);
 char **add_arg(char **args, char *value);
 void	ignore_signals(void);
 
-void split_cmds(t_all *as, t_token *token, t_command **cmd_list);
+int split_cmds(t_all *as, t_token *token, t_command **cmd_list);
 // void execute_commands(t_all *as,t_command *cmd_list, t_envp *env);
 t_command *new_command(void);
 void print_commands(t_command *cmd_list);

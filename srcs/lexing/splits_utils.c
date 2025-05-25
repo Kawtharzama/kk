@@ -1,4 +1,5 @@
 #include "../includes/minishell.h"
+
 void free_exit_status(t_all *as)
 {
 	
@@ -12,23 +13,31 @@ int toknize(char* input, t_all *as) //change to void
     int i;
 	
 	i = split_input(input, &as->token, as->tmp);
+	// if(i == -1)
+	// {
+	// 	free_exit_status(as);
+	// 	return(1);
+	// }
+	// else
+	// 	as->exit_status = 0;
+	i = expand_var(as, as->token, as->cp_envp);
+	// if(i == -1)
+	// 	return(free_token_cmd(as),1);
+	// else
+	// 	as->exit_status = 0;
+	
+	
+	remove_quotes(as->token);
+	i = split_cmds(as, as->token, &as->cmd);
 	if(i == -1)
 	{
-		as->exit_status = 1;
-		return(free_token_cmd(as),1);
+		free_exit_status(as);
+		return(1);
 	}
+	// else if(i == -2)
+	// 	return(free_token_cmd(as),1); edit to be exit
 	else
 		as->exit_status = 0;
-	i = expand_var(as, as->token, as->cp_envp);
-	if(i < 0)
-	{
-		as->exit_status = 1; //add int exiyt to be 1;
-		return(free_token_cmd(as),1);
-	}
-	else
-		as->exit_status = 0;
-	remove_quotes(as->token);
-	split_cmds(as, as->token, &as->cmd);
 	// print_commands(as->cmd); //remove   
 	execute_commands(as, as->cmd, as->cp_envp);
     return 0; //exit
@@ -41,9 +50,11 @@ void token_types(t_token *token)
 		if (ft_strncmp(token->value, "<<",2) == 0) {
             token->type = HEREDOC;
         }
-		else if  (
-			(token->value, ">>", 2) == 0 ||(ft_strncmp(token->value, ">",1) == 0) || (ft_strncmp(token->value, "<", 1) == 0) ) {
-            token->type = REDIR;
+		else if  ((ft_strncmp(token->value, ">>", 2) == 0) ||
+		(ft_strncmp(token->value, ">",1) == 0)||
+		 (ft_strncmp(token->value, "<", 1) == 0)) 
+		{
+			token->type = REDIR;
 	        }
 
 		
