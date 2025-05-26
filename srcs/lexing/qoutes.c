@@ -13,9 +13,7 @@ int find_closing_quote(char *input, int i, int flag, char quote_type)
         else if(input[i] == quote_type && flag == 1)
 		{ 
 			flag = 0;
-			if (input[i + 1] && input[i + 1] != ' ' && !is_parameter(input[i + 1]))
-				continue;
-			else
+			if (input[i + 1] && (input[i + 1] == ' ' || is_parameter(input[i + 1])))
 				break;
 		}
         else if(input[i+1] && flag == 0 && (input[i+1] == ' ' || is_parameter(input[i+ 1])))
@@ -40,25 +38,24 @@ int closing_qoutes(char *input, int i)
    return i;
 }
 
-int	handle_quotes(char *input, int i, t_tmptoken *tmp, t_token **token)
+int	handle_quotes(t_all *as,  char *input, int i, t_tmptoken *tmp, t_token **token)
 {
     
 	tmp->start = i;
 	i = closing_qoutes(input,i);
 	if (i == -1)
     {
-		return (-1); }
+		return (-1); }//syntax error
 	
 	tmp->end = i;
 	tmp->value = ft_substr(input, tmp->start, (tmp->end - tmp->start
 				+ 1));
 	if (!tmp->value)
 	{
-		perror("Memory allocation failed for token.value\n");
-		return (-1);
+		exit_program(as, "Memory allocation failed", 1);
 	}
 	if(add_node(token, tmp->value) == -1)
-	{return -1;} 
+	{exit_program(as, "Memory allocation failed", 1);} 
 	free(tmp->value);
 	tmp->value = NULL;
 	return (i);

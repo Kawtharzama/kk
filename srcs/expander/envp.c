@@ -12,12 +12,12 @@ void copy_envp(char **envp, t_all *as)
 			count++;
 		as->cp_envp->tmp_envp = malloc(sizeof(char*) * (count+1)); //free
 		if (!as->cp_envp->tmp_envp)
-        	exit_program(as, 1); //exit function
+			exit_program(as,"Malloc Fail" ,1); //exit function
 		while(envp[r])
 		{
 			as->cp_envp->tmp_envp[r] = ft_strdup(envp[r]);
         	if (!as->cp_envp->tmp_envp[r])
-				exit_program(as, 1); //exit function
+				exit_program(as,"Malloc Fail" ,1); //exit function
 
 			
 			r++;

@@ -18,7 +18,7 @@ void	print_list(t_token *head)
 
 
 
-int split_input(char* input,t_token **token, t_tmptoken *tmp)
+int split_input (t_all *as, char* input,t_token **token, t_tmptoken *tmp)
 {
     *token = NULL;
  	int		i;
@@ -29,19 +29,19 @@ int split_input(char* input,t_token **token, t_tmptoken *tmp)
  	{
  		tmp->start = i;
  		if (input[i] == '"' || input[i] == '\'')
- 				i = handle_quotes(input, i, tmp, token);
+ 				i = handle_quotes(as, input, i, tmp, token);
 		else if (input[i] == ' ') 
 			;
 		 else if (is_parameter(input[i]))
- 			i = parameter_token(input, i, tmp, token);
+ 			i = parameter_token(as, input, i, tmp, token);
         else
- 			i = str(input, i, tmp, token);
+ 			i = str(as, input, i, tmp, token);
  		if (i == -1)
  			{
    				 
-				printf("Syntax_error\n");
-					return -1;
-			} //exit function (clear then exit)
+				
+				return -1; //syntax error
+			} 
  	i++;
  	}
 	token_types(*token);

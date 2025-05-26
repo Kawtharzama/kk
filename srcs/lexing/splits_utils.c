@@ -4,7 +4,9 @@ void free_exit_status(t_all *as)
 {
 	
 		free_token_cmd(as);
-		as->exit_status = 1;
+
+		write(2,"Syntax_error\n",13);
+		
 	
 }
 
@@ -12,33 +14,35 @@ int toknize(char* input, t_all *as) //change to void
 {
     int i;
 	
-	i = split_input(input, &as->token, as->tmp);
-	// if(i == -1)
-	// {
-	// 	free_exit_status(as);
-	// 	return(1);
-	// }
-	// else
-	// 	as->exit_status = 0;
-	i = expand_var(as, as->token, as->cp_envp);
-	// if(i == -1)
-	// 	return(free_token_cmd(as),1);
+	i = split_input(as, input, &as->token, as->tmp);
+	if(i == -1)
+	{
+		return(free_exit_status(as),1);
+		
+	}
+	else
+		as->exit_status = 0;
+	expand_var(as, as->token, as->cp_envp);
+	if(i == -1)
+		exit(1);
+		// return(free_exit_status(as),1);
+	else
+		as->exit_status = 0;	
 	// else
 	// 	as->exit_status = 0;
 	
 	
 	remove_quotes(as->token);
 	i = split_cmds(as, as->token, &as->cmd);
-	if(i == -1)
-	{
-		free_exit_status(as);
-		return(1);
-	}
+	// if(i == -1)
+	// {
+	// 	free_exit_status(as);
+	// 	return(1);
+	// }
 	// else if(i == -2)
 	// 	return(free_token_cmd(as),1); edit to be exit
-	else
-		as->exit_status = 0;
-	// print_commands(as->cmd); //remove   
+	
+	print_commands(as->cmd); //remove   
 	execute_commands(as, as->cmd, as->cp_envp);
     return 0; //exit
 }
@@ -70,7 +74,7 @@ void token_types(t_token *token)
        }  
 }
 
-int	parameter_token(char *input, int i, t_tmptoken *tmp, t_token **token)
+int	parameter_token(t_all *as, char *input, int i, t_tmptoken *tmp, t_token **token)
 {
 	tmp->start = i;
 	if (input[i + 1] && input[i] == input[i + 1] && input[i + 1] != '|')
@@ -80,8 +84,7 @@ int	parameter_token(char *input, int i, t_tmptoken *tmp, t_token **token)
 				+ 1)); //free
 	if (!tmp->value)
 	{
-		printf("Memory allocation failed for tmptoken.value\n");
-		return (-1);
+		exit_program(as, "Memory allocation failed", 1);
 	}
 	if(add_node(token, tmp->value) == -1)
 		{return -1;} 
@@ -99,7 +102,7 @@ int	is_parameter(char c)
 	return (0);
 }
 
-int	str(char *input, int i, t_tmptoken *tmp, t_token **token)
+int	str(t_all *as, char *input, int i, t_tmptoken *tmp, t_token **token)
 {
 	tmp->start = i;
 	int flag ;
@@ -125,11 +128,10 @@ int	str(char *input, int i, t_tmptoken *tmp, t_token **token)
 	tmp->value = ft_substr(input, tmp->start, (tmp->end - tmp->start));
 	if (!tmp->value)
 	{
-		printf("Memory allocation failed for token.value\n");
-		return (-1);
+		exit_program(as, "Memory allocation failed", 1);
 	}
 	if(add_node(token, tmp->value) == -1)
-		{return -1;} 
+		{exit_program(as, "Memory allocation failed", 1);} 
 	free(tmp->value);
 	tmp->value = NULL;
 	return (i - 1);

@@ -59,8 +59,8 @@ int main(int argv, char** argc, char** envp)
     if(!as) // is there a need??
 
     {
-        perror("error in init all structs strcut");
-        exit_program(as,1);
+
+        exit_program(as,"error in init all structs strcut",1);
     }
     copy_envp(envp, as);//check with export
     path = cur_dir(as);

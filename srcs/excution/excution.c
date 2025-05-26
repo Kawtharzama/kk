@@ -5,13 +5,13 @@ int prepare_pipe_and_fork(int fd[2], int has_next)
     if (has_next && pipe(fd) == -1)
     {
         perror("pipe");
-        exit(EXIT_FAILURE);
+        exit(EXIT_FAILURE);//ask
     }
     pid_t pid = fork();
     if (pid == -1)
     {
         perror("fork");
-        exit(EXIT_FAILURE);
+        exit(EXIT_FAILURE);//ask
     }
     return pid;
 }
@@ -115,13 +115,14 @@ void child_process_logic(t_command *cmd, t_envp *env, int prev_fd, int fd[2])
         char *path = cmd->args[0][0] == '/' ? cmd->args[0] : find_path(env, cmd->args[0]);
         if (!path)
         {
+
             fprintf(stderr, "%s: command not found\n", cmd->args[0]);
             exit(127);
         }
         restore_signals();
         execve(path, cmd->args, env->tmp_envp);
         perror("execv");
-        exit(EXIT_FAILURE);
+        exit(EXIT_FAILURE);//ask
     }
 }
 
@@ -185,7 +186,7 @@ void execute_commands(t_all *as, t_command *cmd_list, t_envp *env)
                         {
                             perror("realloc");
                             free(child_pids);
-                            exit(EXIT_FAILURE);
+                            exit(EXIT_FAILURE);//ask
                         }
                         child_pids = temp_pids;
                     }
@@ -198,6 +199,8 @@ void execute_commands(t_all *as, t_command *cmd_list, t_envp *env)
         }
          cmd_list = cmd_list->next;
     }
+
+    unlink("/tmp/minishell_heredoc_tmp.txt");//ask
     int i =0;
     while(i< num_forked_children)
     {

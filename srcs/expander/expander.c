@@ -44,13 +44,12 @@ static int handle_exit_status(t_all *as, t_token *token)
     token->value = ft_itoa(as->exit_status);
     if (!token->value)
     {
-        perror("Memory allocation failed for exit status");
-        return -1;
+        exit_program(as, "Memory allocation failed", 1);
     }
     return 1;
 }
 
-static int extract_variable(char *value, int *i, char **var)
+static int extract_variable(t_all *as,  char *value, int *i, char **var)
 {
     int start = *i;
     while (value[*i] && (isalnum(value[*i]) || value[*i] == '_'))
@@ -59,8 +58,7 @@ static int extract_variable(char *value, int *i, char **var)
     *var = ft_substr(value, start, end - start);
     if (!*var)
     {
-        perror("Memory allocation failed for token.value");
-        return -1;
+        exit_program(as, "Memory allocation failed", 1);
     }
     return start;
 }
@@ -79,13 +77,13 @@ static char *join_before_env(t_token *token, char *env_value, int start)
         before = ft_substr(token->value, 0, start - 1);
         if (!before)
         {
-            return (free(var_value),NULL);
+            return (free(var_value),NULL); //ask shall we add exit
 
         }
         tmp = var_value;
         var_value = ft_strjoin(before, var_value);
         if(!var_value)
-            return (free(before), free(tmp), NULL);
+            return (free(before), free(tmp), NULL);//ask shall we add exit
 
         free(before);
         free(tmp);
@@ -104,12 +102,12 @@ static int join_after_and_replace(t_token *token, char *var_value, int end, int 
         after = ft_substr(token->value, end, len);
         if (!after)
      
-            return (free(var_value),-1);
+            return (free(var_value),-1);//ask shall we add exit
          
         tmp = var_value;
         var_value = ft_strjoin(var_value, after);
         if (!var_value)
-            return (free(after), free(tmp), -1);
+            return (free(after), free(tmp), -1);//ask shall we add exit
 
         free(after);
         free(tmp);
@@ -124,7 +122,7 @@ static int expand_variable(t_token *token, char *env_value, int start, int end, 
 {
     char *var_value = join_before_env(token, env_value, start);
     if (!var_value)
-        return -1;
+        return -1; //ask shall we add exit
 
     return join_after_and_replace(token, var_value, end, len);
 }
@@ -137,7 +135,7 @@ static int process_dollar(t_all *as, t_token *token, int *i, t_envp *cp_envp)
         return handle_exit_status(as, token);
 
     char *var;
-    int start = extract_variable(token->value, i, &var);
+    int start = extract_variable(as, token->value, i, &var);
     if (start == -1)
         return -1;
 

@@ -77,10 +77,10 @@ t_all *init_strcuts(t_all *as);
 void	init_token(t_tmptoken *tmptoken);
 //split.c
 int	is_parameter(char c);
-int	parameter_token(char *input, int i, t_tmptoken *tmp, t_token **token);
+int	parameter_token(t_all *as,char *input, int i, t_tmptoken *tmp, t_token **token);
 
 //split.c
-int split_input(char* input,t_token **token, t_tmptoken *tmp);
+int split_input (t_all *as, char* input,t_token **token, t_tmptoken *tmp);
 // int split_input(char* input,t_token **token, t_tmptoken *tmp, t_command **cmd);
 void	print_list(t_token *head);
 //free
@@ -99,14 +99,14 @@ int closing_qoutes(char *input, int i);
 // int find_closing_quote(char *input, int i, int flag, char quote_type);
 int find_closing_quote(char *input, int i, int flag, char quote_type);
 
-int	handle_quotes(char *input, int i, t_tmptoken *tmp, t_token **token);
+int	handle_quotes(t_all *as, char *input, int i, t_tmptoken *tmp, t_token **token);
 void replace_qoutes(t_token *token, int i, int j, int q);
 // void replace_qoutes(t_token *token);
 void remove_quotes(t_token *token);
 
 //splits 2
 int closing_qoutes(char *input, int i);
-int	str(char *input, int i, t_tmptoken *tmp, t_token **token);
+int	str(t_all *as, char *input, int i, t_tmptoken *tmp, t_token **token);
 void token_types(t_token *token);
 int check_qout(char *value);
 
@@ -124,16 +124,16 @@ char *get_full_path(char *dir, char *cmd);
 void sig_handler_prompt (int signum);
 void setup_signals(void);
 void restore_signals(void);
-char **add_arg(char **args, char *value);
+char **add_arg(t_all *as, char **args, char *value);
 void	ignore_signals(void);
 
 int split_cmds(t_all *as, t_token *token, t_command **cmd_list);
 // void execute_commands(t_all *as,t_command *cmd_list, t_envp *env);
-t_command *new_command(void);
+t_command *new_command(t_all *as);
 void print_commands(t_command *cmd_list);
 
 //built_ins
-void exit_program(t_all *as, int n);
+void exit_program(t_all *as, char *str,  int n);
 int    execute_echo(char **args);
 int     if_nflag(char *str);
 int     built_in(t_command *cmd_list);

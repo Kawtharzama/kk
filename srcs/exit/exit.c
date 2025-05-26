@@ -12,9 +12,10 @@
 
 #include "../includes/minishell.h"
 
-void	exit_program(t_all *as, int n)
+void	exit_program(t_all *as, char *str, int n)
 {
 	clean(as);
+	perror(str);
 	as->exit_status = n;
 	exit(n);
 }

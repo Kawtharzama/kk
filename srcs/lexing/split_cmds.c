@@ -1,10 +1,10 @@
 #include "../includes/minishell.h"
 
-t_command *new_command(void)
+t_command *new_command(t_all *as)
 {
     t_command *cmd = malloc(sizeof(t_command));
     if (!cmd)
-        return NULL;
+        exit_program(as, "Memory allocation failed", 1);
     cmd->args = NULL;
     cmd->infile = NULL;
     cmd->outfile = NULL;
@@ -16,7 +16,7 @@ t_command *new_command(void)
 }
 
 
-char **add_arg(char **args, char *value)
+char **add_arg(t_all *as, char **args, char *value)
 //appends a new argument string to the end of the args array (resizing as needed)
 {
         int count; //to count amount of args
@@ -29,7 +29,7 @@ char **add_arg(char **args, char *value)
 
         char **new_args = malloc(sizeof(char *) * (count + 2)); //allocates one more for the new arg and NULL
         if (!new_args)
-                return NULL;
+                exit_program(as, "Memory allocation failed", 1);
         while (i < count)
         // copy existing args to new array
                 {new_args[i] = args[i];
@@ -62,10 +62,10 @@ int split_cmds(t_all *as, t_token *token, t_command **cmd_list)
 //splits the token list into a command list
 {
          *cmd_list = NULL; //starts with an empty command list
-        t_command *current_cmd = new_command();
+        t_command *current_cmd = new_command(as);
         if (!current_cmd)
         {
-                return(perror("malloc failed in new_command"), -2);
+                exit_program(as, "Memory allocation failed", 1);
         }
         (void)as;
 
@@ -74,16 +74,15 @@ int split_cmds(t_all *as, t_token *token, t_command **cmd_list)
         {
                 if (token->type == WORD)
                 {
-                        current_cmd->args = add_arg(current_cmd->args, token->value);
+                        current_cmd->args = add_arg(as, current_cmd->args, token->value);
                         if(!current_cmd->args)
-                                 return(perror("malloc failed in new_command"), -2);
+                                 exit_program(as, "Memory allocation failed", 1);
                 }
                 else if (token->type == HEREDOC)
                 {
                         if (!token->next || token->next->type != WORD) 
                         {
-                                printf("Syntax error: expected filename after redirection\n");
-                                return (-2); //exit
+                                exit_program(as, "Memory allocation failed", 1); // no
 
                         }
                         current_cmd->heredoc = 1;
@@ -99,8 +98,8 @@ int split_cmds(t_all *as, t_token *token, t_command **cmd_list)
                 {
                         if (!token->next || token->next->type != WORD)
                         {
-                                printf("Syntax error: expected filename after redirection\n");
-                                return -1;
+                               
+                                return -2;
                         }
 
                         if (ft_strncmp(token->value, ">", 1) == 0)
@@ -145,9 +144,9 @@ int split_cmds(t_all *as, t_token *token, t_command **cmd_list)
                 else if (token->type == PIPE)
                 {
                         append_command(cmd_list, current_cmd);
-                        current_cmd = new_command();
+                        current_cmd = new_command(as);
                         if (!current_cmd)
-                                return(perror("malloc failed in new_command"), -2);
+                                exit_program(as, "Memory allocation failed", 1);
                 }
 
                 token = token->next;
