@@ -3,26 +3,29 @@
 int     if_nflag(char *str)
 {
         int     i;
+        int     flag;
+        int ret;
 
+        ret = 0;
+        flag = 0;
         i = 0;
-        if(str[i] != '-')
-                return (0);
-                        
-        if (!str[i])
-                return (0);
-        i = 1;
-        if (!str[i])
-                return (0);
+        if(str[i] != '-' || !str[i]) 
+                return (0); //newline
+        i = 1; 
         while(str[i])
         {
-                if (str[i] != 'n')
+                if (str[i] == 'n')
                 {
-                        return (0);
+                        flag = 1;
+                        ret = 1;
                 }
+                if ((str[i] == 'e' || str[i] == 'E') && flag == 1)
+                        ret = 1;
+                if (str[i] != 'n')
+                        return (0); //newline
                 i++;
-             
         }
-        return (1);
+        return (ret);
 }
 
 int    execute_echo(char **args)

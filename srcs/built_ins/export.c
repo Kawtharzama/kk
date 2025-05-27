@@ -15,8 +15,10 @@ int is_valid_key(char *key)
 void add_or_update_env(t_envp *env, char *key, char *value)
 {
     int i = 0;
-    char *entry = ft_strjoin(ft_strjoin(key, "="), value);
-
+    char *temp = ft_strjoin(key, "=");
+    char *entry = ft_strjoin(temp, value);
+    free(temp);
+    
     while (i < env->counter)
     {
         if (ft_strncmp(env->tmp_envp[i], key, ft_strlen(key)) == 0 &&
@@ -28,7 +30,6 @@ void add_or_update_env(t_envp *env, char *key, char *value)
         }
         i++;
     }
-
     // Append new entry
     char **new_env = malloc(sizeof(char *) * (env->counter + 2));
     for (i = 0; i < env->counter; i++)

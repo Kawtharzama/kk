@@ -63,24 +63,29 @@ int main(int argv, char** argc, char** envp)
         exit_program(as,"error in init all structs strcut",1);
     }
     copy_envp(envp, as);//check with export
-    path = cur_dir(as);
+ 
 	// print_envp(as->cp_envp);
     // char *path = ft_getenv("PATH",as->cp_envp);
     while(1)
     {
+        path = cur_dir(as); 
         setup_signals();
         input = readline(path); //is it correct?
+        free(path);
         if (input == NULL)
 		{
 			write(1, "exit\n", 5);
 			break;
 		}
+        
         ignore_signals();
         
         add_history(input);
         // char *x= expand_variables(input,as);//move to before execve
         // printf("%s",x);
         toknize(input,as);
+        
+
        
         // print_list(as->token);
        
@@ -88,11 +93,12 @@ int main(int argv, char** argc, char** envp)
 
 
         free(input);
+        
         free_token_cmd(as);// clean token & cmds
        
     }
     int g_exit = as->exit_status;//??
     clean(as); //clean all
-    free(path);
+    
     return (g_exit);
 }

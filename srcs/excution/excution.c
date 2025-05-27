@@ -93,7 +93,7 @@ char *heredoc_cmd(t_all *as, char *del , int n) //merge
         
 
 }
-void child_process_logic(t_command *cmd, t_envp *env, int prev_fd, int fd[2])
+void child_process_logic(t_command *cmd, t_envp *env, int prev_fd, int fd[2], t_all *as)
 {
     redirect_io(cmd, prev_fd, fd);
 
@@ -117,12 +117,20 @@ void child_process_logic(t_command *cmd, t_envp *env, int prev_fd, int fd[2])
         {
 
             fprintf(stderr, "%s: command not found\n", cmd->args[0]);
+            free_token_cmd(as);
+            free_envp(env);
             exit(127);
         }
         restore_signals();
         execve(path, cmd->args, env->tmp_envp);
         perror("execv");
+
         exit(EXIT_FAILURE);//ask
+
+        free_token_cmd(as);
+        free_envp(env);
+        exit(EXIT_FAILURE);
+
     }
 }
 
@@ -151,7 +159,7 @@ void execute_commands(t_all *as, t_command *cmd_list, t_envp *env)
     int num_forked_children = 0;
     int max_children_capacity = 8;
 
-    (void)as;
+    // (void)as;
     t_command *count_list;
     count_list = cmd_list;
     int c =0;
@@ -174,7 +182,7 @@ void execute_commands(t_all *as, t_command *cmd_list, t_envp *env)
             {
                 pid = prepare_pipe_and_fork(fd, cmd_list->next != NULL);
                 if (pid == 0)
-                    child_process_logic(cmd_list, env, prev_fd, fd);
+                    child_process_logic(cmd_list, env, prev_fd, fd, as);
                 else
                 {
                     // Store PID
@@ -216,7 +224,7 @@ void execute_commands(t_all *as, t_command *cmd_list, t_envp *env)
          }
     }
         i++;
-    }
+    }                                                                                                                                                                                           
     // for (int i = 0; i < num_forked_children; i++)
     //     waitpid(child_pids[i], &status, 0);
      
