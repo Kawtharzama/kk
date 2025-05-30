@@ -36,23 +36,28 @@ char	*ft_itoa(int n)
 	char	*str;
 	long	num;
 
-	num = n;
+	num = (long) n;
 	length = num_length(num);
 	str = malloc(length + 1);
 	if (str == NULL)
 		return (NULL);
 	str[length] = '\0';
+	if (num == 0)
+	{
+    	str[0] = '0';
+    	return (str);
+	}
 	if (num < 0)
 	{
 		str[0] = '-';
 		num = -num;
 	}
+	
 	while (num > 0)
 	{
 		str[--length] = (num % 10) + '0';
 		num /= 10;
 	}
-	if (str[0] != '-' && length == 1)
-		str[0] = '0';
+
 	return (str);
 }

@@ -64,7 +64,7 @@ int split_cmds(t_all *as, t_token *token, t_command **cmd_list)
          *cmd_list = NULL; //starts with an empty command list
         t_command *current_cmd = new_command(as);
         if (!current_cmd)
-        {
+        {       free(current_cmd);//ask
                 exit_program(as, "Memory allocation failed", 1);
         }
         (void)as;
@@ -107,7 +107,7 @@ int split_cmds(t_all *as, t_token *token, t_command **cmd_list)
                                 if (ft_strncmp(token->value, ">>", 2) == 0)
                                         current_cmd->append = 1;
                               
-                                current_cmd->outfile = ft_strdup(token->next->value);
+                                current_cmd->outfile = ft_strdup(token->next->value);//ask how to free??
                         int fd_out = open(current_cmd->outfile, current_cmd->append ? O_WRONLY | O_CREAT | O_APPEND : O_WRONLY | O_CREAT | O_TRUNC, 0644);
                                 if (fd_out == -1)
                                 {
@@ -148,8 +148,7 @@ int split_cmds(t_all *as, t_token *token, t_command **cmd_list)
                         if (!current_cmd)
                                 exit_program(as, "Memory allocation failed", 1);
                 }
-                else
-                        free(current_cmd);
+               
                
 
                 token = token->next;
@@ -157,6 +156,8 @@ int split_cmds(t_all *as, t_token *token, t_command **cmd_list)
 
         if (current_cmd->args) 
                 append_command(cmd_list, current_cmd);
+                else
+                free(current_cmd);//ask        
        
         return 0; 
 }

@@ -27,7 +27,7 @@ void redirect_io(t_all *as, t_command *cmd, int prev_fd, int fd[2]) //return int
         }
         dup2(fd_heredoc, STDIN_FILENO);
         close(fd_heredoc);
-        // unlink("/tmp/minishell_heredoc_tmp.txt"); // TODO: remove in perent
+        // TODO: remove in perent
     }
     else if (cmd->infile)
     {
@@ -55,6 +55,8 @@ void redirect_io(t_all *as, t_command *cmd, int prev_fd, int fd[2]) //return int
         }
         dup2(fd_out, STDOUT_FILENO);
         close(fd_out);
+    //     if (dup2(fd_in, STDIN_FILENO) == -1) //ask
+    // exit_fork(as, "dup2 infile");
     }
     else if (cmd->next != NULL)
         dup2(fd[1], STDOUT_FILENO);
@@ -140,6 +142,7 @@ void parent_process_cleanup(t_command *cmd, int *prev_fd, int fd[2])
         *prev_fd = -1;
 }
 
+
 void execute_commands(t_all *as, t_command *cmd_list, t_envp *env)
 {
     int fd[2];
@@ -162,6 +165,7 @@ void execute_commands(t_all *as, t_command *cmd_list, t_envp *env)
     while (count_list)
     {
         count_list = count_list -> next;
+       
         c++;
     }
      
@@ -170,8 +174,10 @@ void execute_commands(t_all *as, t_command *cmd_list, t_envp *env)
           //TODO if it is 1 cmd excute here , multiole in child
         if(cmd_list->executable == 1)
         {
-            if (built_in(cmd_list) && c == 1) //add the
-            {
+            if (built_in(cmd_list) && c == 1 && (!cmd_list->infile && !cmd_list->outfile  && !cmd_list->heredoc)) //add the
+            { //shall i add heredoc? ask
+            
+                
                 execute_built_ins(cmd_list, env);
             }
             else
@@ -190,7 +196,7 @@ void execute_commands(t_all *as, t_command *cmd_list, t_envp *env)
                         {
                             perror("realloc");
                             free(child_pids);
-                            exit(EXIT_FAILURE);//ask
+                            exit(EXIT_FAILURE);//ask program or fork
                         }
                         child_pids = temp_pids;
                     }
@@ -199,28 +205,39 @@ void execute_commands(t_all *as, t_command *cmd_list, t_envp *env)
                     parent_process_cleanup(cmd_list, &prev_fd, fd);
                 }
             }
+                
            
         }
          cmd_list = cmd_list->next;
     }
-
-    unlink("/tmp/minishell_heredoc_tmp.txt");//ask
-    int i =0;
+    //ask shall i add if
+    // for (int i = 0; i < num_forked_children; i++)
+    // {
+    //     waitpid(child_pids[i], &status, 0);
+    //     if (child_pids[i] == child_pids[num_forked_children - 1])
+    //         last_status = status;
+    // }
+    // if (WIFEXITED(last_status))
+    //     as->exit_status = WEXITSTATUS(last_status);
+    // else if (WIFSIGNALED(last_status))
+    //     as->exit_status = 128 + WTERMSIG(last_status);
+    unlink("/tmp/minishell_heredoc_tmp.txt");    
+int i =0;
     while(i< num_forked_children)
     {
-        waitpid(child_pids[i], &status, 0);
-        if(waitpid(-1, &status, 0) == (child_pids[num_forked_children - 1 ]))
+        int wpid = waitpid(child_pids[i], &status, 0);
+        
+        if (wpid == child_pids[num_forked_children - 1])
         {
-            if(WIFEXITED(status))
-             {
+            if (WIFEXITED(status))
                 as->exit_status = WEXITSTATUS(status);
-             }
-            else if (WIFSIGNALED(status)) {
-                as->exit_status = 128 + WTERMSIG(status);  
-         }
-    }
+            else if (WIFSIGNALED(status))
+                as->exit_status = 128 + WTERMSIG(status);
+        }
         i++;
-    }                                                                                                                                                                                           
+    }
+       
+                                                                                                                                                                                              
     // for (int i = 0; i < num_forked_children; i++)
     //     waitpid(child_pids[i], &status, 0);
      

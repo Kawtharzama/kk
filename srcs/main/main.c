@@ -97,8 +97,8 @@ int main(int argv, char** argc, char** envp)
         free_token_cmd(as);// clean token & cmds
        
     }
-    int g_exit = as->exit_status;//??
+    // int g_exit = as->exit_status;//??
     clean(as); //clean all
     
-    return (g_exit);
+    return (0);
 }

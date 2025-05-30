@@ -18,7 +18,7 @@ int execute_cd(char **args, t_envp *env)
 
     if (!args[0])
     {
-        printf("jjj\n");
+        printf("error\n");
         tar_dir = ft_getenv("HOME", env);
     }
     else if(args[0]  &&     ft_strncmp(args[0], "-", 1) == 0)

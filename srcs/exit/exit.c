@@ -32,7 +32,7 @@ void	exit_fork(t_all *as, char *str)
 
 void	exit_forkk(t_all *as, char *str, int n )
 {
-	
+	as->exit_status = n;
 	clean(as);
 	perror(str);
 	exit(n);

@@ -91,6 +91,11 @@ void	free_files(t_command *cmd)
 		free(cmd->outfile);
 		cmd->outfile = NULL;
 	}
+    // if (cmd->heredoc)
+	// {
+	// 	free(cmd->heredoc);
+	// 	cmd->heredoc = 0;
+	// }
 }
 
 
