@@ -4,6 +4,7 @@ int find_closing_quote(char *input, int i, int flag, char quote_type)
 {
     while (input[i])
     {
+        
        if ((input[i] == '"' || input[i] == '\'') && flag == 0)
 		{
 			quote_type = input[i];
@@ -16,7 +17,7 @@ int find_closing_quote(char *input, int i, int flag, char quote_type)
 			if (input[i + 1] && (input[i + 1] == ' ' || is_parameter(input[i + 1])))
 				break;
 		}
-        else if(input[i+1] && flag == 0 && (input[i+1] == ' ' || is_parameter(input[i+ 1])))
+        else if(input[i] && input[i+1] && flag == 0 && (input[i+1] == ' ' || is_parameter(input[i+ 1])))
     		break;
             i++;     
     }

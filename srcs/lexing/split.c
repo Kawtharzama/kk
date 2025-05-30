@@ -38,10 +38,10 @@ int split_input (t_all *as, char* input,t_token **token, t_tmptoken *tmp)
  			i = str(as, input, i, tmp, token);
  		if (i == -1)
  			{
-   				 
-				
-				return -1; //syntax error
+   				return -1; //syntax error
 			} 
+		if(!input[i])	
+			break;
  	i++;
  	}
 	token_types(*token);

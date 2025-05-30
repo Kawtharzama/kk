@@ -87,7 +87,7 @@ int main(int argv, char** argc, char** envp)
         
 
        
-        // print_list(as->token);
+        print_list(as->token);
        
         
 

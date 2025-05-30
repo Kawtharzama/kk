@@ -23,11 +23,11 @@ int toknize(char* input, t_all *as) //change to void
 	else
 		as->exit_status = 0;
 	expand_var(as, as->token, as->cp_envp);
-	if(i == -1)
-		exit(1);
-		// return(free_exit_status(as),1);
-	else
-		as->exit_status = 0;	
+	// if(i == -1)
+	// 	exit(1);
+	// 	// return(free_exit_status(as),1);
+	// else
+	// 	as->exit_status = 0;	
 	// else
 	// 	as->exit_status = 0;
 	
@@ -77,7 +77,7 @@ void token_types(t_token *token)
 int	parameter_token(t_all *as, char *input, int i, t_tmptoken *tmp, t_token **token)
 {
 	tmp->start = i;
-	if (input[i + 1] && input[i] == input[i + 1] && input[i + 1] != '|')
+	if (input[i] && input[i + 1] && input[i] == input[i + 1] && input[i + 1] != '|')
 		i++;
 	tmp->end = i;
 	tmp->value = ft_substr(input, tmp->start, (tmp->end - tmp->start

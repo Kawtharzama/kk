@@ -153,4 +153,7 @@ char *heredoc_cmd(t_all *as, char *del , int n);
 void	execute_commands(t_all *as, t_command *cmd_list, t_envp *env);
 int expand_var(t_all *as, t_token *token, t_envp *cp_envp);
 
+void	exit_fork(t_all *as, char *str);
+void	exit_forkk(t_all *as, char *str, int n);
+
 #endif

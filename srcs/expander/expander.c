@@ -40,12 +40,17 @@ static int toggle_double_quote(int ch, int in_double)
 static int handle_exit_status(t_all *as, t_token *token)
 {
     // printf("%d", as->exit_status);
+    char *status_str;
+
+    if (!token || !token->value)
+        return 0;
+
     free(token->value);
-    token->value = ft_itoa(as->exit_status);
-    if (!token->value)
-    {
+    status_str = ft_itoa(as->exit_status);
+    if (!status_str)
         exit_program(as, "Memory allocation failed", 1);
-    }
+
+    token->value = status_str;
     return 1;
 }
 
@@ -154,7 +159,8 @@ static int process_token(t_all *as, t_token *token, t_envp *cp_envp)
 {
     int i = 0;
     int in_double = 0;
-    int ret;
+    // int ret;
+    
 
     while (token->value[i])
     {
@@ -163,11 +169,15 @@ static int process_token(t_all *as, t_token *token, t_envp *cp_envp)
         in_double = toggle_double_quote(token->value[i], in_double);
         if (token->value[i] == '$')
         {
-            ret = process_dollar(as, token, &i, cp_envp);
-            if (ret != 0)
-                return ret;
+             process_dollar(as, token, &i, cp_envp);
+            // if(ret == -1)
+            //     return -1;  
+            i = 0;
+            in_double = 0;
+            continue;                  
+    
         }
-        i++;
+         i++;
     }
     return 0;
 }

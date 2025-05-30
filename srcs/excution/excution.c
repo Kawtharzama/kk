@@ -1,31 +1,29 @@
 #include "../includes/minishell.h"
 
-int prepare_pipe_and_fork(int fd[2], int has_next)
+int prepare_pipe_and_fork(t_all *as, int fd[2], int has_next)
 {
     if (has_next && pipe(fd) == -1)
     {
-        perror("pipe");
-        exit(EXIT_FAILURE);//ask
+        exit_fork(as, "pipe") ;//ask
     }
     pid_t pid = fork();
     if (pid == -1)
     {
-        perror("fork");
-        exit(EXIT_FAILURE);//ask
+      
+        exit_fork(as, "fork") ;//ask
     }
     return pid;
 }
 
-void redirect_io(t_command *cmd, int prev_fd, int fd[2]) //return int
+void redirect_io(t_all *as, t_command *cmd, int prev_fd, int fd[2]) //return int
 {
     if (cmd->heredoc) //merge
     {
          int fd_heredoc = open("/tmp/minishell_heredoc_tmp.txt", O_RDONLY);
          if (fd_heredoc == -1)
          {
-             perror("open heredoc2");
-            // as->exit_status = 1;
-            exit(EXIT_FAILURE);
+            exit_fork(as, "open heredoc2") ;//ask
+
         }
         dup2(fd_heredoc, STDIN_FILENO);
         close(fd_heredoc);
@@ -36,8 +34,8 @@ void redirect_io(t_command *cmd, int prev_fd, int fd[2]) //return int
         int fd_in = open(cmd->infile, O_RDONLY);
         if (fd_in == -1)
         {
-            perror("infile");
-            exit(EXIT_FAILURE);
+            exit_fork(as, "infile") ;//ask
+
         }
         dup2(fd_in, STDIN_FILENO);
         close(fd_in);
@@ -52,8 +50,8 @@ void redirect_io(t_command *cmd, int prev_fd, int fd[2]) //return int
                           : O_WRONLY | O_CREAT | O_TRUNC, 0644);
         if (fd_out == -1)
         {
-            perror("outfile");
-            exit(EXIT_FAILURE);
+            exit_fork(as, "outfile") ;//ask
+
         }
         dup2(fd_out, STDOUT_FILENO);
         close(fd_out);
@@ -68,9 +66,9 @@ char *heredoc_cmd(t_all *as, char *del , int n) //merge
         int fd = open("/tmp/minishell_heredoc_tmp.txt", O_RDWR | O_CREAT | O_TRUNC, 0644);//open a file
         if (fd == -1)
         {
-                perror("open heredoc");
-                as->exit_status = 1;
-                exit(as->exit_status);//check this 1
+               
+                exit_program(as, "open heredoc",1) ;//ask
+                //check this 1
         }
         while(1)
         {
@@ -93,9 +91,9 @@ char *heredoc_cmd(t_all *as, char *del , int n) //merge
         
 
 }
-void child_process_logic(t_command *cmd, t_envp *env, int prev_fd, int fd[2], t_all *as)
+void child_process_logic(t_all*as, t_command *cmd, t_envp *env, int prev_fd, int fd[2])
 {
-    redirect_io(cmd, prev_fd, fd);
+    redirect_io(as, cmd, prev_fd, fd);
 
     if (prev_fd != -1)
         close(prev_fd);
@@ -116,20 +114,15 @@ void child_process_logic(t_command *cmd, t_envp *env, int prev_fd, int fd[2], t_
         if (!path)
         {
 
-            fprintf(stderr, "%s: command not found\n", cmd->args[0]);
-            free_token_cmd(as);
-            free_envp(env);
-            exit(127);
+            exit_forkk(as, "command not found",127) ;//ask
+
         }
         restore_signals();
         execve(path, cmd->args, env->tmp_envp);
-        perror("execv");
 
-        exit(EXIT_FAILURE);//ask
+        exit_fork(as, "execv") ;//ask
+        //ask
 
-        free_token_cmd(as);
-        free_envp(env);
-        exit(EXIT_FAILURE);
 
     }
 }
@@ -156,6 +149,9 @@ void execute_commands(t_all *as, t_command *cmd_list, t_envp *env)
 
     // For dynamic PID storage
     pid_t *child_pids = malloc(8 * sizeof(pid_t));
+    if(!child_pids)
+        exit_program(as, "malloc failed",1) ;//ask
+
     int num_forked_children = 0;
     int max_children_capacity = 8;
 
@@ -180,9 +176,9 @@ void execute_commands(t_all *as, t_command *cmd_list, t_envp *env)
             }
             else
             {
-                pid = prepare_pipe_and_fork(fd, cmd_list->next != NULL);
+                pid = prepare_pipe_and_fork(as, fd, cmd_list->next != NULL);
                 if (pid == 0)
-                    child_process_logic(cmd_list, env, prev_fd, fd, as);
+                    child_process_logic(as, cmd_list, env, prev_fd, fd);
                 else
                 {
                     // Store PID

@@ -148,12 +148,15 @@ int split_cmds(t_all *as, t_token *token, t_command **cmd_list)
                         if (!current_cmd)
                                 exit_program(as, "Memory allocation failed", 1);
                 }
+                else
+                        free(current_cmd);
+               
 
                 token = token->next;
         }
 
         if (current_cmd->args) 
                 append_command(cmd_list, current_cmd);
-
+       
         return 0; 
 }
