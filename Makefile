@@ -5,6 +5,7 @@ SRCS = \
 	srcs/nodes/nodes.c \
 	srcs/init/init.c \
 	srcs/clean/free.c \
+	srcs/clean/free_utils.c \
 	srcs/lexing/qoutes.c \
 	srcs/lexing/splits_utils.c \
 	srcs/expander/envp.c \

@@ -34,6 +34,7 @@ void	ignore_signals(void)
 	signal(SIGINT, SIG_IGN);
 	signal(SIGQUIT, SIG_IGN);
 }
+
 void	restore_signals(void)
 {
 	signal(SIGINT, SIG_DFL);

@@ -19,7 +19,7 @@ void redirect_io(t_all *as, t_command *cmd, int prev_fd, int fd[2]) //return int
 {
     if (cmd->heredoc) //merge
     {
-         int fd_heredoc = open("/tmp/minishell_heredoc_tmp.txt", O_RDONLY);
+         int fd_heredoc = open("/tmp/minishell_heredoc_tmp.txt", O_RDONLY ) ;
          if (fd_heredoc == -1)
          {
             exit_fork(as, "open heredoc2") ;//ask
@@ -65,11 +65,12 @@ void redirect_io(t_all *as, t_command *cmd, int prev_fd, int fd[2]) //return int
 
 char *heredoc_cmd(t_all *as, char *del , int n) //merge
 {
+    (void)as;
         int fd = open("/tmp/minishell_heredoc_tmp.txt", O_RDWR | O_CREAT | O_TRUNC, 0644);//open a file
         if (fd == -1)
         {
                
-                exit_program(as, "open heredoc",1) ;//ask
+                exit_program(as, "open heredoc",1) ;//ask//do not exit
                 //check this 1
         }
         while(1)
@@ -221,8 +222,8 @@ void execute_commands(t_all *as, t_command *cmd_list, t_envp *env)
     //     as->exit_status = WEXITSTATUS(last_status);
     // else if (WIFSIGNALED(last_status))
     //     as->exit_status = 128 + WTERMSIG(last_status);
-    unlink("/tmp/minishell_heredoc_tmp.txt");    
-int i =0;
+    // unlink("/tmp/minishell_heredoc_tmp.txt");    ask
+    int i =0;
     while(i< num_forked_children)
     {
         int wpid = waitpid(child_pids[i], &status, 0);

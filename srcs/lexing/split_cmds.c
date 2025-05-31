@@ -1,5 +1,48 @@
 #include "../includes/minishell.h"
 
+void print_commands(t_command *cmd_list)
+{
+    int i;
+    int cmd_num = 1;
+    t_command *cmd = cmd_list;
+
+    while (cmd)
+    {
+        printf("=== Command %d ===\n", cmd_num);
+
+        // Print arguments
+        if (cmd->args)
+        {
+            printf("Arguments:\n");
+            for (i = 0; cmd->args[i]; i++)
+                printf("  [%d]: %s\n", i, cmd->args[i]);
+        }
+        else
+        {
+            printf("Arguments: None\n");
+        }
+
+        // Print infile
+        if (cmd->infile)
+            printf("Infile: %s\n", cmd->infile);
+        else
+            printf("Infile: None\n");
+
+        // Print outfile
+        if (cmd->outfile)
+            printf("Outfile: %s (append: %s)\n", cmd->outfile, cmd->append ? "yes" : "no");
+        else
+            printf("Outfile: None\n");
+        if (cmd->heredoc)
+            printf("Herdoc : %d",cmd->heredoc);    
+
+
+        printf("\n");
+        cmd = cmd->next;
+        cmd_num++;
+    }
+}
+
 t_command *new_command(t_all *as)
 {
     t_command *cmd = malloc(sizeof(t_command));

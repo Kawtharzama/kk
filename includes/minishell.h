@@ -115,8 +115,16 @@ int check_qout(char *value);
 void copy_envp(char **envp, t_all *as);
 void print_envp(t_envp *cp_envp);
 int expand_var(t_all *as, t_token *token , t_envp *cp_envp);
+// static int process_token(t_all *as, t_token *token, t_envp *cp_envp);
+// static int process_dollar(t_all *as, t_token *token, int *i, t_envp *cp_envp);
 char *ft_getenv(const char *name,t_envp *cp_envp);
-
+// static int handle_single_quotes(const char *value, int *i, int in_double);
+// static int toggle_double_quote(int ch, int in_double);
+// static int handle_exit_status(t_all *as, t_token *token);
+// static int extract_variable(t_all *as,  char *value, int *i, char **var);
+// static char *join_before_env(t_token *token, char *env_value, int start);
+// static int join_after_and_replace(t_token *token, char *var_value, int end, int len);
+// static int expand_variable(t_token *token, char *env_value, int start, int end, int len);
 char* find_path(t_envp *cp_envp, char *cmd);
 char *get_full_path(char *dir, char *cmd);
 
@@ -156,4 +164,7 @@ int expand_var(t_all *as, t_token *token, t_envp *cp_envp);
 void	exit_fork(t_all *as, char *str);
 void	exit_forkk(t_all *as, char *str, int n);
 
+void	start_shell(t_all *as);
+void	setup_environment(int argc, char **argv, char **envp, t_all **as);
+void	free_files(t_command *cmd);
 #endif

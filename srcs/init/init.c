@@ -39,8 +39,8 @@ t_all	*init_strcuts(t_all *as)
 
 char	*cur_dir(t_all *as)
 {
-	char        *path;
-	char        *cwd;
+	char	*path;
+	char	*cwd;
 
 	path = NULL;
 	cwd = NULL;

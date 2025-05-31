@@ -30,34 +30,38 @@ static int	num_length(long n)
 	return (length);
 }
 
+static int	ft_itoa_fill(char *str, long num, int length)
+{
+	str[length] = '\0';
+	if (num == 0)
+	{
+		str[0] = '0';
+		return (0);
+	}
+	while (num > 0)
+	{
+		str[--length] = (num % 10) + '0';
+		num /= 10;
+	}
+	return (0);
+}
+
 char	*ft_itoa(int n)
 {
 	int		length;
 	char	*str;
 	long	num;
 
-	num = (long) n;
+	num = (long)n;
 	length = num_length(num);
 	str = malloc(length + 1);
-	if (str == NULL)
+	if (!str)
 		return (NULL);
-	str[length] = '\0';
-	if (num == 0)
-	{
-    	str[0] = '0';
-    	return (str);
-	}
 	if (num < 0)
 	{
 		str[0] = '-';
 		num = -num;
 	}
-	
-	while (num > 0)
-	{
-		str[--length] = (num % 10) + '0';
-		num /= 10;
-	}
-
+	ft_itoa_fill(str, num, length);
 	return (str);
 }
