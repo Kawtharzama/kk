@@ -17,14 +17,14 @@ void	exit_program(t_all *as, char *str, int n)
 	if (as)
 		as->exit_status = n;
 	clean(as);
-	perror(str);
+		perror(str);
 	exit(n);
 }
 
 void	exit_fork(t_all *as, char *str)
 {
 	clean(as);
-	perror(str);
+		perror(str);
 	exit(EXIT_FAILURE);
 }
 
@@ -32,6 +32,7 @@ void	exit_forkk(t_all *as, char *str, int n)
 {
 	as->exit_status = n;
 	clean(as);
-	perror(str);
+	if (str)
+		perror(str);
 	exit(n);
 }

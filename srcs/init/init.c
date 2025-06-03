@@ -34,6 +34,8 @@ t_all	*init_strcuts(t_all *as)
 	as->cp_envp = malloc(sizeof(t_envp));
 	if (!as->cp_envp)
 		exit_program(as, "Memory allocation failed", 1);
+	as->child_pids = NULL;
+
 	return (as);
 }
 

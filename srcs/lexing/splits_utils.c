@@ -20,8 +20,7 @@ int toknize(char* input, t_all *as) //change to void
 		return(free_exit_status(as),1);
 		
 	}
-	else
-		as->exit_status = 0;
+
 	expand_var(as, as->token, as->cp_envp);
 	// if(i == -1)
 	// 	exit(1);
@@ -33,7 +32,10 @@ int toknize(char* input, t_all *as) //change to void
 	
 	
 	remove_quotes(as->token);
+
+	print_list(as->token);
 	i = split_cmds(as, as->token, &as->cmd);
+
 	// if(i == -1)
 	// {
 	// 	free_exit_status(as);

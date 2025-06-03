@@ -60,6 +60,7 @@ typedef struct s_all{
     struct s_tmptoken *tmp;
     struct s_command *cmd;
     struct s_envp *cp_envp;
+    pid_t *child_pids;
     // char *var_value;
     int exit_status;
 

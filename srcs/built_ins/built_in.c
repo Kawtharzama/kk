@@ -5,6 +5,8 @@ int     built_in(t_command *cmd_list)
         t_command *cmd = cmd_list;
         int     return_va = 0;
         
+        if (!cmd->args)
+                return (0);
         if(ft_strncmp(cmd->args[0], "echo", 4) == 0)
                 return_va = 1;
         else if(ft_strncmp(cmd->args[0], "cd", 2) == 0)
@@ -22,7 +24,7 @@ int     built_in(t_command *cmd_list)
         return (return_va);
 }
 
-void   execute_built_ins(t_command *cmd_list, t_envp *env)
+void   execute_built_ins(t_command *cmd_list, t_envp *env) //
 {
         t_command *cmd = cmd_list;
         (void)env;
