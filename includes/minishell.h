@@ -128,7 +128,6 @@ char *ft_getenv(const char *name,t_envp *cp_envp);
 // static int expand_variable(t_token *token, char *env_value, int start, int end, int len);
 char* find_path(t_envp *cp_envp, char *cmd);
 char *get_full_path(char *dir, char *cmd);
-
 // signals
 void sig_handler_prompt (int signum);
 void setup_signals(void);

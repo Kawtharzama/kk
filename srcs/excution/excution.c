@@ -109,9 +109,19 @@ void child_process_logic(t_all *as, t_command *cmd, t_envp *env, int prev_fd, in
 	}
 	else
 	{
+
 		if(!cmd->args)
 			exit_forkk(as,NULL,0);
-		char *path = cmd->args[0][0] == '/' ? cmd->args[0] : find_path(env, cmd->args[0]);
+		char *path;
+
+		if (ft_strchr(cmd->args[0], '/'))
+			path = cmd->args[0];
+		else
+			path = find_path(env, cmd->args[0]);
+			
+			
+	
+
 		if (!path)
 		{
 
@@ -119,7 +129,8 @@ void child_process_logic(t_all *as, t_command *cmd, t_envp *env, int prev_fd, in
 			exit_forkk(as, "command not found", 127); // ask
 		}
 		restore_signals();
-
+		free(cmd->args[0]);
+		cmd->args[0] = ft_strdup(path);  //ask
 		execve(path, cmd->args, env->tmp_envp);
 
 		exit_fork(as, "execv"); // ask

@@ -28,7 +28,8 @@ int execute_cd(char **args, t_envp *env)
 
     if (!tar_dir || *tar_dir =='\0')
     {
-        fprintf(stderr, "cd: target not set\n");
+        fprintf(stderr, "cd: target not set\n"); //use printf o
+        // write(2,"cd: target not set\n",19);
         free(old_pwd);
         return (1);
     }

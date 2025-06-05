@@ -48,6 +48,7 @@ char	*get_full_path(char *dir, char *cmd)
 		return (fullpath);
 	}
 	free(fullpath);
+	
 	return (NULL);
 }
 
@@ -59,7 +60,7 @@ char	*find_path(t_envp *cp_envp, char *cmd)
 	char	*fullpath;
 
 	path = ft_getenv("PATH", cp_envp);
-	
+
 	if (!path)
 		return (NULL);
 	start = path;
@@ -72,14 +73,14 @@ char	*find_path(t_envp *cp_envp, char *cmd)
 		
 		if (fullpath)
 			return (fullpath);
-		free(fullpath);
+		// free(fullpath);
 		if (end)
 			start = end + 1;
 		else
 			break ;
 		end = ft_strchr(start, ':');
 	}
-	return (cmd);
+	return (NULL);
 }
 
 void	print_envp(t_envp *cp_envp)

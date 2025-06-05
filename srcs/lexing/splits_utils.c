@@ -44,7 +44,7 @@ int toknize(char* input, t_all *as) //change to void
 	// else if(i == -2)
 	// 	return(free_token_cmd(as),1); edit to be exit
 	
-	// print_commands(as->cmd); //remove   
+	print_commands(as->cmd); //remove   
 	execute_commands(as, as->cmd, as->cp_envp);
     return 0; //exit
 }
