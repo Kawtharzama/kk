@@ -16,7 +16,7 @@ void remove_env_var(t_envp *env, const char *key)
 {
     int i = 0, j = 0;
     int len = ft_strlen(key);
-    char **new_env = malloc(sizeof(char *) * env->counter); // worst case: all remain except 1
+    char **new_env = malloc(sizeof(char *) * (env->counter + 1)); // worst case: all remain except 1
     if (!new_env)
         return;
 
@@ -28,7 +28,7 @@ void remove_env_var(t_envp *env, const char *key)
         }
         else
         {
-            new_env[j++] = env->tmp_envp[i];
+            new_env[j++] = ft_strdup(env->tmp_envp[i]);
         }
         i++;
     }

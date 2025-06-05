@@ -34,7 +34,7 @@ void redirect_io(t_all *as, t_command *cmd, int prev_fd, int fd[2]) // return in
 		int fd_in = open(cmd->infile, O_RDONLY);
 		if (fd_in == -1)
 		{
-			// close(fd[]) ask tasnim to close 1 or 2?
+			// close(fd[0]) ask tasnim to close 1 or 2?
 			exit_fork(as, "infile"); // ask
 		}
 		dup2(fd_in, STDIN_FILENO);
@@ -46,9 +46,11 @@ void redirect_io(t_all *as, t_command *cmd, int prev_fd, int fd[2]) // return in
 	if (cmd->outfile)
 	{
 		int fd_out = open(cmd->outfile, cmd->append ? O_WRONLY | O_CREAT | O_APPEND : O_WRONLY | O_CREAT | O_TRUNC, 0644);
+
+
 		if (fd_out == -1)
 		{
-			// close(fd[]) ask tasnim to close 1 or 2?
+			// close(fd[1]) ask tasnim to close 1 or 2?
 			exit_fork(as, "outfile"); // ask
 		}
 		dup2(fd_out, STDOUT_FILENO);
@@ -68,7 +70,7 @@ char *heredoc_cmd(t_all *as, char *del, int n) // merge
 	{
 
 		exit_program(as, "open heredoc", 1); // ask//do not exit
-											 // check this 1
+		// check this 1
 	}
 	while (1)
 	{
@@ -125,7 +127,7 @@ void child_process_logic(t_all *as, t_command *cmd, t_envp *env, int prev_fd, in
 		if (!path)
 		{
 
-			// close(fd); 1 or 0 ask tasnim
+			// close(fd[]); 1 or 0 ask tasnim
 			exit_forkk(as, "command not found", 127); // ask
 		}
 		restore_signals();
@@ -134,7 +136,7 @@ void child_process_logic(t_all *as, t_command *cmd, t_envp *env, int prev_fd, in
 		execve(path, cmd->args, env->tmp_envp);
 
 		exit_fork(as, "execv"); // ask
-								// ask
+	// ask
 	}
 }
 
@@ -173,7 +175,6 @@ void execute_commands(t_all *as, t_command *cmd_list, t_envp *env)
 	while (count_list)
 	{
 		count_list = count_list->next;
-
 		c++;
 	}
 

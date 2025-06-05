@@ -24,7 +24,7 @@ int     built_in(t_command *cmd_list)
         return (return_va);
 }
 
-void   execute_built_ins(t_command *cmd_list, t_envp *env) //
+void   execute_built_ins(t_command *cmd_list, t_envp *env, t_all *as) //
 {
         t_command *cmd = cmd_list;
         (void)env;

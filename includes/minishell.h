@@ -141,13 +141,19 @@ t_command *new_command(t_all *as);
 void print_commands(t_command *cmd_list);
 
 //built_ins
-void exit_program(t_all *as, char *str,  int n);
-int    execute_echo(char **args);
-int     if_nflag(char *str);
 int     built_in(t_command *cmd_list);
 void   execute_built_ins(t_command *cmd_list, t_envp *env);
+void exit_program(t_all *as, char *str,  int n);
+//echo
+int    execute_echo(char **args);
+int     if_n(char *str);
+int     if_nflag(char *str);
+void    if_true(char **args, t_envp *env, char *equal_sign, int i);
+void	if_not(char **args, t_envp *env, int i);
+
 void update_env_var(t_envp *env, const char *key, const char *value);
 int    execute_cd(char **args, t_envp *env);
+int error_mess(char *old_pwd, char *new_pwd, char *mess);
 int execute_env(char **args, t_envp *env);
 int execute_export(char **args, t_envp *env);
 void add_or_update_env(t_envp *env, char *key, char *value);
