@@ -21,7 +21,6 @@ void	print_list(t_token *head)
 	i = 0;
 	while (current != NULL)
 	{
-		printf("Token[%d] %s, type: %d\n", i, current->value, current->type);
 		current = current->next;
 		i++;
 	}
@@ -38,13 +37,13 @@ int	split_input(t_all *as, char *input, t_token **token, t_tmptoken *tmp)
 	{
 		tmp->start = i;
 		if (input[i] == '"' || input[i] == '\'')
-			i = handle_quotes(as, input, i, tmp, token);
+			i = handle_quotes(as, input, i, tmp);
 		else if (input[i] == ' ')
 			;
 		else if (is_parameter(input[i]))
-			i = parameter_token(as, input, i, tmp, token);
+			i = parameter_token(as, input, i, tmp);
 		else
-			i = str(as, input, i, tmp, token);
+			i = str(as, input, i, tmp);
 		if (i == -1)
 			return (-1);
 		if (!input[i])
@@ -55,7 +54,7 @@ int	split_input(t_all *as, char *input, t_token **token, t_tmptoken *tmp)
 	return (i);
 }
 
-int	str(t_all *as, char *input, int i, t_tmptoken *tmp, t_token **token)
+int	scan_token(char *input, int i, t_tmptoken *tmp)
 {
 	int	flag;
 
@@ -75,12 +74,22 @@ int	str(t_all *as, char *input, int i, t_tmptoken *tmp, t_token **token)
 			break ;
 	}
 	tmp->end = i;
-	tmp->value = ft_substr(input, tmp->start, (tmp->end - tmp->start));
+	return (i);
+}
+
+int	str(t_all *as, char *input, int i, t_tmptoken *tmp)
+{
+	int	end;
+
+	end = scan_token(input, i, tmp);
+	if (end == -1)
+		return (-1);
+	tmp->value = ft_substr(input, tmp->start, tmp->end - tmp->start);
 	if (!tmp->value)
 		exit_program(as, "Memory allocation failed", 1);
-	if (add_node(token, tmp->value) == -1)
+	if (add_node(&as->token, tmp->value) == -1)
 		exit_program(as, "Memory allocation failed", 1);
 	free(tmp->value);
 	tmp->value = NULL;
-	return (i - 1);
+	return (end - 1);
 }

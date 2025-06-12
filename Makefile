@@ -10,6 +10,7 @@ SRCS = \
 	srcs/lexing/splits_utils.c \
 	srcs/expander/envp.c \
 	srcs/expander/expander.c \
+	srcs/expander/expander_utils.c \
 	srcs/excution/excution.c \
 	srcs/exit/exit.c \
 	srcs/signals/signals.c \

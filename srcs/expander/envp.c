@@ -48,21 +48,15 @@ char	*get_full_path(char *dir, char *cmd)
 		return (fullpath);
 	}
 	free(fullpath);
-	
 	return (NULL);
 }
 
-char	*find_path(t_envp *cp_envp, char *cmd)
+char	*search_path_dirs(char *path, char *cmd)
 {
-	char	*path;
 	char	*start;
 	char	*end;
 	char	*fullpath;
 
-	path = ft_getenv("PATH", cp_envp);
-
-	if (!path)
-		return (NULL);
 	start = path;
 	end = ft_strchr(start, ':');
 	while (end || *start)
@@ -70,10 +64,10 @@ char	*find_path(t_envp *cp_envp, char *cmd)
 		if (end)
 			*end = '\0';
 		fullpath = get_full_path(start, cmd);
-		
+		if (end)
+			*end = ':';
 		if (fullpath)
 			return (fullpath);
-		// free(fullpath);
 		if (end)
 			start = end + 1;
 		else
@@ -83,14 +77,33 @@ char	*find_path(t_envp *cp_envp, char *cmd)
 	return (NULL);
 }
 
-void	print_envp(t_envp *cp_envp)
+char	*find_path(t_envp *cp_envp, char *cmd)
 {
-	int		r;
+	char	*path;
 
-	r = 0;
-	while (cp_envp->tmp_envp[r])
+	path = ft_getenv("PATH", cp_envp);
+	if (!path)
+		return (NULL);
+	return (search_path_dirs(path, cmd));
+}
+
+char	*ft_getenv(const char *name, t_envp *cp_envp)
+{
+	int	i;
+	int	len;
+
+	i = 0;
+	len = ft_strlen(name);
+	if (!name || !cp_envp || !cp_envp->tmp_envp)
+		return (NULL);
+	while (cp_envp->tmp_envp[i])
 	{
-		printf("%s\n", cp_envp->tmp_envp[r]);
-		r++;
+		if (cp_envp->tmp_envp[i] && ft_strncmp(cp_envp->tmp_envp[i], name,
+				len) == 0 && (cp_envp->tmp_envp[i][len]) == '=')
+		{
+			return (cp_envp->tmp_envp[i] + len + 1);
+		}
+		i++;
 	}
+	return ("");
 }

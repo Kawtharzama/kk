@@ -17,14 +17,14 @@ void	exit_program(t_all *as, char *str, int n)
 	if (as)
 		as->exit_status = n;
 	clean(as);
-		perror(str);
+	perror(str);
 	exit(n);
 }
 
 void	exit_fork(t_all *as, char *str)
 {
 	clean(as);
-		perror(str);
+	perror(str);
 	exit(EXIT_FAILURE);
 }
 
@@ -35,4 +35,10 @@ void	exit_forkk(t_all *as, char *str, int n)
 	if (str)
 		perror(str);
 	exit(n);
+}
+
+void	free_exit_status(t_all *as)
+{
+	free_token_cmd(as);
+	write(2, "Syntax_error\n", 13);
 }

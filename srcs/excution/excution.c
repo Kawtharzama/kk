@@ -47,7 +47,6 @@ void redirect_io(t_all *as, t_command *cmd, int prev_fd, int fd[2]) // return in
 	{
 		int fd_out = open(cmd->outfile, cmd->append ? O_WRONLY | O_CREAT | O_APPEND : O_WRONLY | O_CREAT | O_TRUNC, 0644);
 
-
 		if (fd_out == -1)
 		{
 			// close(fd[1]) ask tasnim to close 1 or 2?
@@ -70,7 +69,7 @@ char *heredoc_cmd(t_all *as, char *del, int n) // merge
 	{
 
 		exit_program(as, "open heredoc", 1); // ask//do not exit
-		// check this 1
+						     // check this 1
 	}
 	while (1)
 	{
@@ -102,41 +101,33 @@ void child_process_logic(t_all *as, t_command *cmd, t_envp *env, int prev_fd, in
 		close(fd[0]);
 		close(fd[1]);
 	}
-
 	if (built_in(cmd))
 	{
-		execute_built_ins(cmd, env);
-		exit_forkk(as,NULL,0);
-		
+		execute_built_ins(cmd, env, as);
+		exit_forkk(as, NULL, 0);
 	}
 	else
 	{
 
-		if(!cmd->args)
-			exit_forkk(as,NULL,0);
+		if (!cmd->args)
+			exit_forkk(as, NULL, 0);
 		char *path;
 
 		if (ft_strchr(cmd->args[0], '/'))
 			path = cmd->args[0];
 		else
 			path = find_path(env, cmd->args[0]);
-			
-			
-	
-
 		if (!path)
 		{
-
 			// close(fd[]); 1 or 0 ask tasnim
 			exit_forkk(as, "command not found", 127); // ask
 		}
 		restore_signals();
 		free(cmd->args[0]);
-		cmd->args[0] = ft_strdup(path);  //ask
+		cmd->args[0] = ft_strdup(path); // ask
 		execve(path, cmd->args, env->tmp_envp);
-
 		exit_fork(as, "execv"); // ask
-	// ask
+		// ask
 	}
 }
 
@@ -184,9 +175,9 @@ void execute_commands(t_all *as, t_command *cmd_list, t_envp *env)
 		if (cmd_list->executable == 1)
 		{
 			if (built_in(cmd_list) && c == 1 && (!cmd_list->infile && !cmd_list->outfile && !cmd_list->heredoc)) // add the
-			{																									 // shall i add heredoc? ask
+			{												     // shall i add heredoc? ask
 
-				execute_built_ins(cmd_list, env);
+				execute_built_ins(cmd_list, env, as);
 			}
 			else
 			{

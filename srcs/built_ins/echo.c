@@ -17,9 +17,7 @@ int     if_nflag(char *str)
 {
         int     i;
         int     flag;
-        int ret;
-
-        ret = 0;
+        int ret = 0;
         flag = 0;
         i = 0;
         if(str[i] != '-' || !str[i]) 
@@ -38,7 +36,7 @@ int     if_nflag(char *str)
                 }
                 i++;
         }
-        return (1);
+        return (ret);
 }
 
 int    execute_echo(char **args)

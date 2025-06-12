@@ -35,7 +35,6 @@ t_all	*init_strcuts(t_all *as)
 	if (!as->cp_envp)
 		exit_program(as, "Memory allocation failed", 1);
 	as->child_pids = NULL;
-
 	return (as);
 }
 

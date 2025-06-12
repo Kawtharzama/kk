@@ -2,6 +2,7 @@
 
 void print_commands(t_command *cmd_list)
 {
+	return ;
 	int i;
 	int cmd_num = 1;
 	t_command *cmd = cmd_list;

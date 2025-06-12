@@ -64,7 +64,7 @@ void	free_all(t_all *as)
 			free_envp(as->cp_envp);
 			as->cp_envp = NULL;
 		}
-		if(as->child_pids)
+		if (as->child_pids)
 		{
 			free(as->child_pids);
 			as->child_pids = NULL;

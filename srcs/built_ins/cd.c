@@ -18,16 +18,14 @@ int execute_cd(char **args, t_envp *env)
     else
         tar_dir = args[0];
     if (!tar_dir || *tar_dir =='\0')
-<<<<<<< HEAD
     {
-        fprintf(stderr, "cd: target not set\n"); //use printf o
-        // write(2,"cd: target not set\n",19);
+        // fprintf(stderr, "cd: target not set\n"); //use printf o
+        write(2,"cd: target not set\n",19);
         free(old_pwd);
         return (1);
     }
-=======
-        return(error_mess(old_pwd,NULL, "cd: target not set\n"));
->>>>>>> 8670ea5 (done_almost)
+        // return(error_mess(old_pwd,NULL, "cd: target not set\n"));
+
     if(chdir(tar_dir) != 0)
         return(error_mess(old_pwd,NULL, "cd"));
     new_pwd = getcwd(NULL, 0);
